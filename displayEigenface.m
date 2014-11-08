@@ -3,7 +3,6 @@ function [] = displayEigenface(pid)
 NumImgs = 21;
 imgMatrix = zeros(100*100, NumImgs);
 
-
     for i = 1:NumImgs
         path = ['PIE_Nolight/' num2str(pid) '/' num2str(i) '.bmp'];
         photo = imread(path);
@@ -18,7 +17,6 @@ for i=1:NumImgs
 end
 
 G = imgMatrix'*imgMatrix;
-%G_sort = sort(abs(G),'descend');
 
 [u, D] = eig(G);
 v = imgMatrix*u;
@@ -34,7 +32,8 @@ end;
 
 %plot mean vector
 subplot(5,5,1);
-image(reshape(meanVal,[100,100]) );
+imagesc(reshape(meanVal,[100,100]) );
+colormap gray;
 title('Mean');
 
 for i=1:NumImgs
