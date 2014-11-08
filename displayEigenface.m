@@ -34,11 +34,14 @@ for i = 1:size(D,1)
   NV(:,i) = v(:,index_dv(i));
 end;
 
+%plot mean vector
+subplot(5,5,1);
+image(reshape(meanVal,[100,100]) );
+
 for i=1:NumImgs
-    subplot(5,5,i);
+    subplot(5,5,i+1);
     image(reshape(NV(:,i),[100,100]));
 end
-subplot(5,5,22);
-image(reshape(meanVal,[100,100]) );
+
 
 % [test_u,test_D] = (reshape(NV(:,i),[100,100])
