@@ -1,7 +1,6 @@
+function [] = displayEigenface(pid)
 
-pid = 1;
 NumImgs = 21;
-photo = double(imread('PIE_Nolight/1/1.bmp'));
 imgMatrix = zeros(100*100, NumImgs);
 
 
@@ -15,8 +14,7 @@ imgMatrix = zeros(100*100, NumImgs);
 meanVal =  mean(imgMatrix,2);
 for i=1:NumImgs
     imgMatrix(: ,i) = imgMatrix(: ,i)-meanVal;
-    %subplot(5,5,i);
-    %image(reshape(imgMatrix(:,i),[100,100]));
+  
 end
 
 G = imgMatrix'*imgMatrix;
@@ -37,10 +35,13 @@ end;
 %plot mean vector
 subplot(5,5,1);
 image(reshape(meanVal,[100,100]) );
+title('Mean');
 
 for i=1:NumImgs
     subplot(5,5,i+1);
     image(reshape(NV(:,i),[100,100]));
+    title_str = ['V' num2str(i)];
+    title(title_str);
 end
 
 
