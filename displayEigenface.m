@@ -15,16 +15,30 @@ imgMatrix = zeros(100*100, NumImgs);
 meanVal =  mean(imgMatrix,2);
 for i=1:NumImgs
     imgMatrix(: ,i) = imgMatrix(: ,i)-meanVal;
-    subplot(5,5,i);
-    image(reshape(imgMatrix(:,i),[100,100]));
+    %subplot(5,5,i);
+    %image(reshape(imgMatrix(:,i),[100,100]));
 end
 
 G = imgMatrix'*imgMatrix;
-sort(abs(G));
+%G_sort = sort(abs(G),'descend');
+
 [u, D] = eig(G);
 v = imgMatrix*u;
-normalized_v = v/norm(v);
 
-% Plot "mean" picture
+dvec = diag(D);
+NV = zeros(size(v));
+[dvec,index_dv] = sort(abs(dvec));
+index_dv = flipud(index_dv);
+for i = 1:size(D,1)
+  ND(i,i) = D(index_dv(i),index_dv(i));
+  NV(:,i) = v(:,index_dv(i));
+end;
+
+for i=1:NumImgs
+    subplot(5,5,i);
+    image(reshape(NV(:,i),[100,100]));
+end
 subplot(5,5,22);
 image(reshape(meanVal,[100,100]) );
+
+% [test_u,test_D] = (reshape(NV(:,i),[100,100])
