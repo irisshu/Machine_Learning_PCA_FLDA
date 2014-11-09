@@ -39,18 +39,40 @@ for i=1:NumPeople
         p = double(photo(:));
         pc_train{i}{j} = V'*(p-m); 
     end   
-   
-    % Calculate pc_test
+end
+
+correct_ans = 0;
+
+    
+for i=1:NumPeople
     for j=1:21
-        if(j==7 || j==10 ||j==19)
-            % Do nothing
-        else
+       if(j~=7 && j~=10 && j~= 19)
+            % Calculate pc_test
             path = ['PIE_Nolight/' num2str(i) '/' num2str(j) '.bmp'];
             photo = imread(path);
             p = double(photo(:));
-            pc_test = V'*(p-m); 
-        end
-    end
+            pc_test = V'*(p-m);               
+
+            %label  
+            minDist = inf;    
+            for c=1:65
+                for k=1:3
+                     Dist = norm(pc_test-pc_train{c}{k});
+                    if (Dist < minDist)
+                        minDist = Dist;
+                        classLabel = c;                          
+                    end                   
+                end
+                if(classLabel==i)
+                     correct_ans = correct_ans +1;
+                end
+            end
+        end        
+    end      
 end
+
+recog = correct_ans/(NumPeople*(21-3)) *100;
+line = ['Recognition rate = ',num2str(recog), '%' ];
+disp(line);
 
 
