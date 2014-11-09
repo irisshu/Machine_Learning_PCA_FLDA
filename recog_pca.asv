@@ -1,10 +1,11 @@
 
 % Only calculate PCA for one person ----------------------------
 NumTrain = 3;
-% NumPeople = 65;
+NumPeople = 65;
 imgMatrix = zeros(100*100, NumTrain);
 trainIndex = {7,10,19};
 
+for i=1:NumPeople
 for i=1:NumTrain
     path = ['PIE_Nolight/1/' num2str(cell2mat(trainIndex(i))) '.bmp'];
     photo = imread(path);
@@ -31,12 +32,12 @@ for i = 1:size(oD,1)
   V(:,i) = v(:,index_dv(i)); % Get matrix V
 end;
 %------------------------------------------------
-for i=1:NumTrain
+for j=1:NumTrain
     path = ['PIE_Nolight/1/' num2str(cell2mat(trainIndex(i))) '.bmp'];
     photo = imread(path);
-    columnVec = photo(:);
-    pc_tr = V'*(p-m); 
+    p = double(photo(:));
+    pc_tran{1}{j} = V'*(p-m); 
 end   
-
+end
 
 
