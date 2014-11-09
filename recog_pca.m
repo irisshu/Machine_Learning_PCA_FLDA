@@ -30,3 +30,13 @@ for i = 1:size(oD,1)
   D(i,1) = oD(index_dv(i),index_dv(i)); % Get column vector D (eigenvalue)
   V(:,i) = v(:,index_dv(i)); % Get matrix V
 end;
+%------------------------------------------------
+for j=1:NumTrain
+    path = ['PIE_Nolight/1/' num2str(cell2mat(trainIndex(i))) '.bmp'];
+    photo = imread(path);
+    p = double(photo(:));
+    pc_tran{1}{j} = V'*(p-m); 
+end   
+
+
+
