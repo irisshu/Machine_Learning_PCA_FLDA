@@ -4,40 +4,50 @@ NumTrain = 3;
 NumPeople = 65;
 imgMatrix = zeros(100*100, NumTrain);
 trainIndex = {7,10,19};
+%testIndex = {1,2,3};
 
 for i=1:NumPeople
-for i=1:NumTrain
-    path = ['PIE_Nolight/1/' num2str(cell2mat(trainIndex(i))) '.bmp'];
-    photo = imread(path);
-    columnVec = photo(:);
-    imgMatrix(: ,i) = columnVec;  
-end   
+    for j=1:NumTrain
+        path = ['PIE_Nolight/' num2str(i) '/' num2str(cell2mat(trainIndex(j))) '.bmp'];
+        photo = imread(path);
+        columnVec = photo(:);
+        imgMatrix(: ,j) = columnVec;  
+    end   
 
-m =  mean(imgMatrix,2); % Get mean vector m
-for i=1:NumTrain
-    imgMatrix(: ,i) = imgMatrix(: ,i)-m;  
-end
+    m =  mean(imgMatrix,2); % Get mean vector m
+    for j=1:NumTrain
+        imgMatrix(: ,j) = imgMatrix(: ,j)-m;  
+    end
 
-G = imgMatrix'*imgMatrix;
-[u, oD] = eig(G);
-v = imgMatrix*u;
-v = (v/norm(v));
+    G = imgMatrix'*imgMatrix;
+    [u, oD] = eig(G);
+    v = imgMatrix*u;
+    v = (v/norm(v));
 
-dvec = diag(oD);
-V = zeros(size(v));
-[dvec,index_dv] = sort(abs(dvec));
-index_dv = flipud(index_dv);
-for i = 1:size(oD,1)
-  D(i,1) = oD(index_dv(i),index_dv(i)); % Get column vector D (eigenvalue)
-  V(:,i) = v(:,index_dv(i)); % Get matrix V
-end;
-%------------------------------------------------
-for j=1:NumTrain
-    path = ['PIE_Nolight/1/' num2str(cell2mat(trainIndex(i))) '.bmp'];
-    photo = imread(path);
-    p = double(photo(:));
-    pc_tran{1}{j} = V'*(p-m); 
-end   
+    dvec = diag(oD);
+    V = zeros(size(v));
+    [dvec,index_dv] = sort(abs(dvec));
+    index_dv = flipud(index_dv);
+    for j = 1:size(oD,1)
+      D(j,1) = oD(index_dv(j),index_dv(j)); % Get column vector D (eigenvalue)
+      V(:,j) = v(:,index_dv(j)); % Get matrix V
+    end;
+    %------------------------------------------------
+    for j=1:NumTrain
+        path = ['PIE_Nolight/' num2str(i) '/' num2str(cell2mat(trainIndex(j))) '.bmp'];
+        photo = imread(path);
+        p = double(photo(:));
+        pc_train{i}{j} = V'*(p-m); 
+    end   
+    
+    for j=1:NumPeople
+        if(j==7)
+            
+        end
+        else
+            
+        end
+    end
 end
 
 

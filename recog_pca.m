@@ -4,6 +4,7 @@ NumTrain = 3;
 NumPeople = 65;
 imgMatrix = zeros(100*100, NumTrain);
 trainIndex = {7,10,19};
+%testIndex = {1,2,3};
 
 for i=1:NumPeople
     for j=1:NumTrain
@@ -36,8 +37,20 @@ for i=1:NumPeople
         path = ['PIE_Nolight/' num2str(i) '/' num2str(cell2mat(trainIndex(j))) '.bmp'];
         photo = imread(path);
         p = double(photo(:));
-        pc_tran{i}{j} = V'*(p-m); 
+        pc_train{i}{j} = V'*(p-m); 
     end   
+   
+    % Calculate pc_test
+    for j=1:21
+        if(j==7 || j==10 ||j==19)
+            % Do nothing
+        else
+            path = ['PIE_Nolight/' num2str(i) '/' num2str(j) '.bmp'];
+            photo = imread(path);
+            p = double(photo(:));
+            pc_test = V'*(p-m); 
+        end
+    end
 end
 
 
