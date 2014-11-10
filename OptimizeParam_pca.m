@@ -12,7 +12,6 @@ trainIndex = {7,10,19};
 
 % Creating training images space
 dim = NumPeople*NumTrain ;
-
 for i=1:NumPeople
     for j=1:NumTrain
         path = ['PIE_Nolight/' num2str(i) '/' num2str(cell2mat(trainIndex(j))) '.bmp'];
@@ -21,8 +20,8 @@ for i=1:NumPeople
         imgMatrix(: ,i*j) = columnVec;  
     end   
 end
-
-    m =  mean(imgMatrix,2); % Get mean vector m
+    % Get mean vector m
+    m =  mean(imgMatrix,2); 
     for i=1:dim
         imgMatrix(: ,i) = imgMatrix(: ,i)-m;  
     end
@@ -67,7 +66,7 @@ end
     end
 
 
-
+%---------------
 correct_ans = 0;
     
 for i=1:NumPeople
@@ -90,9 +89,10 @@ for i=1:NumPeople
                     end                   
                 end
                 if(classLabel==i)
-                     correct_ans = correct_ans +1;
-                end
+                         correct_ans = correct_ans +1;
+                end   
             end
+            
         end        
     end      
 end
