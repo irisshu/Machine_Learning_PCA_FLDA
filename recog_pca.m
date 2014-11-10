@@ -26,6 +26,8 @@ for i=1:NumPeople
 
     dvec = diag(oD);
     V = zeros(size(v));
+    D = zeros(size(oD,1));
+        
     [dvec,index_dv] = sort(abs(dvec));
     index_dv = flipud(index_dv);
     for j = 1:size(oD,1)
