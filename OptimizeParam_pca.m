@@ -1,8 +1,8 @@
-% function recogRate = OptimizeParam_pca(k)
-% k = subDim
+ function recogRate = OptimizeParam_pca(k)
+ subDim = k;
 % If subDim is not given, subDim = dim - 1;
 
-subDim = 195-1;
+%subDim = 195-1;
 
 NumTrain = 3;
 NumPeople = 65;
@@ -87,12 +87,11 @@ for i=1:NumPeople
                         minDist = Dist;
                         classLabel = c;                          
                     end                   
-                end
-                if(classLabel==i)
-                         correct_ans = correct_ans +1;
-                end   
+                end               
             end
-            
+            if(classLabel==i)
+                   correct_ans = correct_ans +1;
+            end   
         end        
     end      
 end
@@ -102,4 +101,4 @@ line = ['Recognition rate = ',num2str(recogRate) ];
 disp(line);
 
 
-%end
+end
