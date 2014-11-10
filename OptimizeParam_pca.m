@@ -1,47 +1,70 @@
-function recogRate = OptimizeParam_pca(k)
+% function recogRate = OptimizeParam_pca(k)
+% k = subDim
+% If subDim is not given, subDim = dim - 1;
+
+subDim = 195-1;
 
 NumTrain = 3;
 NumPeople = 65;
 imgMatrix = zeros(100*100, NumTrain);
 trainIndex = {7,10,19};
 
+
+% Creating training images space
+dim = NumPeople*NumTrain ;
+
 for i=1:NumPeople
     for j=1:NumTrain
         path = ['PIE_Nolight/' num2str(i) '/' num2str(cell2mat(trainIndex(j))) '.bmp'];
         photo = imread(path);
         columnVec = photo(:);
-        imgMatrix(: ,j) = columnVec;  
-    end   
-
-    m =  mean(imgMatrix,2); % Get mean vector m
-    for j=1:NumTrain
-        imgMatrix(: ,j) = imgMatrix(: ,j)-m;  
-    end
-
-    
-    G = imgMatrix'*imgMatrix;
-    [u, oD] = eig(G);
-    v = imgMatrix*u;
-    v = (v/norm(v));
-
-    dvec = diag(oD);
-    V = zeros(size(v));
-    D = zeros(k);
-        
-    [dvec,index_dv] = sort(abs(dvec));
-    index_dv = flipud(index_dv);
-    for j = 1:k
-      D(j,1) = oD(index_dv(j),index_dv(j)); % Get column vector D (eigenvalue)
-      V(:,j) = v(:,index_dv(j)); % Get matrix V
-    end;
-
-    for j=1:k
-        path = ['PIE_Nolight/' num2str(i) '/' num2str(cell2mat(trainIndex(j))) '.bmp'];
-        photo = imread(path);
-        p = double(photo(:));
-        pc_train{i}{j} = V'*(p-m); 
+        imgMatrix(: ,i*j) = columnVec;  
     end   
 end
+
+    m =  mean(imgMatrix,2); % Get mean vector m
+    for i=1:dim
+        imgMatrix(: ,i) = imgMatrix(: ,i)-m;  
+    end
+
+    %PCA
+    G = imgMatrix'*imgMatrix;
+    [u, oD] = eig(G);
+    dvec = diag(oD);        
+    [dvec,index_dv] = sort(abs(dvec));
+    index_dv = flipud(index_dv);
+    
+    D = zeros(size(oD));
+    V = zeros(size(u));
+    for i = 1:size(oD,1)
+      D(i,i) = oD(index_dv(i),index_dv(i)); % Get column vector D (eigenvalue)
+      V(:,i) = u(:,index_dv(i)); % Get matrix V
+    end;
+
+    D = diag(D);
+    D = D / (dim-1);
+    D = D(1 : subDim);        % Retaining only the largest subDim ones
+
+    V = imgMatrix * V;    % Turk-Pentland trick (part 2)
+    
+    % Normalisation to unit length
+    for i = 1 : dim
+        V(:, i) = V(:, i) / norm(V(:, i));
+    end;
+    
+    % Dimensionality reduction. 
+    w = V(:, 1:subDim);
+    
+   % Subtract mean face from all images 
+    %zeroMeanDATA = zeros(size(DATA));
+    for i=1:NumPeople
+        for j=1:NumTrain
+            path = ['PIE_Nolight/' num2str(i) '/' num2str(cell2mat(trainIndex(j))) '.bmp'];
+            photo = imread(path);
+            p = double(photo(:));
+            pc_train{i}{j} = w'*(p-m); 
+        end   
+    end
 
 
 
@@ -54,12 +77,12 @@ for i=1:NumPeople
             path = ['PIE_Nolight/' num2str(i) '/' num2str(j) '.bmp'];
             photo = imread(path);
             p = double(photo(:));
-            pc_test = V'*(p-m);               
+            pc_test = w'*(p-m);               
 
             %label  
             minDist = inf;    
             for c=1:65
-                for q=1:k
+                for q=1:3
                      Dist = norm(pc_test-pc_train{c}{q});
                     if (Dist < minDist)
                         minDist = Dist;
@@ -79,4 +102,4 @@ line = ['Recognition rate = ',num2str(recogRate) ];
 disp(line);
 
 
-end
+%end
