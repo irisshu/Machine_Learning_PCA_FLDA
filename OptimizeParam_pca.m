@@ -1,10 +1,9 @@
-function recogRate = recog_pca(k);
+function recogRate = OptimizeParam_pca(k)
 
 NumTrain = 3;
 NumPeople = 65;
 imgMatrix = zeros(100*100, NumTrain);
 trainIndex = {7,10,19};
-
 
 for i=1:NumPeople
     for j=1:NumTrain
@@ -19,6 +18,7 @@ for i=1:NumPeople
         imgMatrix(: ,j) = imgMatrix(: ,j)-m;  
     end
 
+    
     G = imgMatrix'*imgMatrix;
     [u, oD] = eig(G);
     v = imgMatrix*u;
@@ -26,16 +26,16 @@ for i=1:NumPeople
 
     dvec = diag(oD);
     V = zeros(size(v));
-    D = zeros(size(oD,1));
+    D = zeros(k);
         
     [dvec,index_dv] = sort(abs(dvec));
     index_dv = flipud(index_dv);
-    for j = 1:size(oD,1)
+    for j = 1:k
       D(j,1) = oD(index_dv(j),index_dv(j)); % Get column vector D (eigenvalue)
       V(:,j) = v(:,index_dv(j)); % Get matrix V
     end;
-   
-    for j=1:NumTrain
+
+    for j=1:k
         path = ['PIE_Nolight/' num2str(i) '/' num2str(cell2mat(trainIndex(j))) '.bmp'];
         photo = imread(path);
         p = double(photo(:));
@@ -43,8 +43,9 @@ for i=1:NumPeople
     end   
 end
 
-correct_ans = 0;
 
+
+correct_ans = 0;
     
 for i=1:NumPeople
     for j=1:21
@@ -58,7 +59,7 @@ for i=1:NumPeople
             %label  
             minDist = inf;    
             for c=1:65
-                for q=1:3
+                for q=1:k
                      Dist = norm(pc_test-pc_train{c}{q});
                     if (Dist < minDist)
                         minDist = Dist;
@@ -73,8 +74,9 @@ for i=1:NumPeople
     end      
 end
 
-recogRate = correct_ans/(NumPeople*(21-3)) ;
+recogRate = correct_ans/(65*(21-3)) ;
 line = ['Recognition rate = ',num2str(recogRate) ];
 disp(line);
+
 
 end
